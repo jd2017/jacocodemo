@@ -46,24 +46,45 @@
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>0.8.7</version>
         <executions>
+          <!-- 准备代理，以便在测试运行时收集覆盖率数据 -->
           <execution>
             <goals>
               <goal>prepare-agent</goal>
             </goals>
           </execution>
+          <!-- 生成覆盖率报告 -->
           <execution>
             <id>report</id>
-            <phase>prepare-package</phase>
+            <phase>prepare-package</phase> <!-- prepare-package阶段在package阶段之前执行，通常用于准备打包所需的所有资源。或者，如test，在测试后立即生成覆盖率报告。 -->
             <goals>
-              <goal>report</goal>
+              <goal>report</goal> <!-- 表示执行JaCoCo的report目标，该目标将生成覆盖率报告。-->
             </goals>
           </execution>
+          <!-- 检查覆盖率是否满足阈值要求（可选） -->
+          <execution>
+            <id>check</id>
+            <phase>verify</phase> <!-- verify阶段是构建生命周期中的一个后期阶段，用于运行任何检查以验证包是否有效且达到质量标准。 -->
+          <goals>
+            <goal>check</goal>
+          </goals>
+          <configuration>
+            <!-- 覆盖率阈值配置 -->
+            <rules>
+              <rule>
+                <element>PACKAGE</element> <!--PACKAGE：覆盖率将按包（即Java中的包）进行评估， 也可以设置为CLASS（按类评估）或 METHOD（按方法评估）等 -->
+                <limits>
+                  <limit>
+                    <counter>LINE</counter> <!-- LINE，（测量代码行的覆盖率），也可以设置为BRANCH（分之覆盖率）, INSTRUCTION（指令覆盖率）, COMPLEXITY（复杂度覆盖率）, METHOD（方法覆盖率）, CLASS（类覆盖率）等 -->
+                    <minimum>0.80</minimum> <!-- 覆盖率阈值，例如80% -->
+                  </limit>
+                </limits>
+              </rule>
+            </rules>
+          </configuration>
+        </execution>
         </executions>
       </plugin>
     </plugins>
   </build>
-
-
-
 
 </project>
